@@ -5,39 +5,64 @@ PROGNAME=fo.sh
 
 include_cd_exit_code=0
 
-argument_dirs=()
-if [[ $# == 0 ]]; then
-  if [[ -f ~/.$PROGNAME/MOST_RECENTLY_USED ]]; then
-    echo "$PROGNAME ! WARNING: Using most recently used directory list"
-    readarray -t argument_dirs < ~/.$PROGNAME/MOST_RECENTLY_USED
-  else
-    echo "$PROGNAME ! ERROR: No directories specified, exiting"
-    exit 1
-  fi
-else
-  while [ "$1" != "" ]; do
-    if [[ ${1:0:1} == "@" ]]; then
-      readarray -t predefined_dir_list < ~/.$PROGNAME/${1#@}
-      argument_dirs+=(${predefined_dir_list[@]})
+_parse_arguments()
+{
+  if [[ $# == 0 ]]; then
+    if [[ -f ~/.$PROGNAME/MOST_RECENTLY_USED ]]; then
+      echo "$PROGNAME ! WARNING: Using most recently used directory list"
+      readarray -t argument_dirs < ~/.$PROGNAME/MOST_RECENTLY_USED
     else
-      argument_dirs+=($1)
+      echo "$PROGNAME ! ERROR: No directories specified, exiting"
+      exit 1
     fi
-    shift
-  done
-fi
-
-IFS=$'\n' sorted_argument_dirs=($(sort -u <<<"${argument_dirs[*]}"))
-unset IFS
-
-target_dirs=()
-for dir in "${sorted_argument_dirs[@]}"; do
-  if [[ -d "$dir" ]]; then
-    full_path=$(cd "$dir"; pwd)
-    target_dirs+=($full_path)
   else
-    echo "$PROGNAME ! SKIPPED: $dir: Not a directory"
+    while [ "$1" != "" ]; do
+      if [[ ${1:0:1} == "@" ]]; then
+        readarray -t predefined_dir_list < ~/.$PROGNAME/${1#@}
+        argument_dirs+=(${predefined_dir_list[@]})
+      else
+        argument_dirs+=($1)
+      fi
+      shift
+    done
   fi
-done
+}
+
+_normalize_paths()
+{
+  IFS=$'\n' unique_arguments=($(sort -u <<<"$*"))
+  unset IFS
+
+  for argument in "${unique_arguments[@]}"; do
+    if [[ -d "$argument" ]]; then
+      echo $(cd "$argument"; pwd)
+    else
+      echo "$PROGNAME ! SKIPPED: $argument: Not a directory" >&2
+    fi
+  done
+}
+
+_execute_command_in_directory()
+{
+    pushd $dir > /dev/null
+    pushd_exit_code=$?
+    if [[ $pushd_exit_code != 0 ]]; then
+      if [[ $include_cd_exit_code != 0 ]]; then
+        prev_exit_code=$pushd_exit_code
+      fi
+      return
+    fi
+
+    /bin/bash -c "(exit $prev_exit_code); $command"
+    prev_exit_code=$?
+
+    popd > /dev/null
+}
+
+argument_dirs=()
+_parse_arguments $@
+
+target_dirs=($(_normalize_paths ${argument_dirs[@]}))
 
 mkdir -p ~/.$PROGNAME/
 printf "%s\n" "${target_dirs[@]}" > ~/.$PROGNAME/MOST_RECENTLY_USED
@@ -59,19 +84,7 @@ while read -p "$PROGNAME > " command ; do
     echo -e "\n______________________________________________________________________________"
     echo -e "@$index $(echo $dir | sed 's#.*/##' ) ($(echo $dir | sed 's#/[^/]\+$##'))\n"
 
-    pushd $dir > /dev/null
-    pushd_exit_code=$?
-    if [[ $pushd_exit_code != 0 ]]; then
-      if [[ $include_cd_exit_code != 0 ]]; then
-        prev_exit_code=$pushd_exit_code
-      fi
-      continue
-    fi
-
-    /bin/bash -c "(exit $prev_exit_code); $command"
-    prev_exit_code=$?
-
-    popd > /dev/null
+    _execute_command_in_directory
   done
 
   echo -e "\n=============================================================================="
