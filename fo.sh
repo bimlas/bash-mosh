@@ -3,8 +3,6 @@
 
 PROGNAME=fo.sh
 
-include_cd_exit_code=0
-
 _parse_arguments()
 {
   if [[ $# == 0 ]]; then
@@ -45,13 +43,6 @@ _normalize_paths()
 _execute_command_in_directory()
 {
     pushd $dir > /dev/null
-    pushd_exit_code=$?
-    if [[ $pushd_exit_code != 0 ]]; then
-      if [[ $include_cd_exit_code != 0 ]]; then
-        prev_exit_code=$pushd_exit_code
-      fi
-      return
-    fi
 
     /bin/bash -c "(exit $prev_exit_code); $command"
     prev_exit_code=$?
@@ -68,16 +59,16 @@ mkdir -p ~/.$PROGNAME/
 printf "%s\n" "${target_dirs[@]}" > ~/.$PROGNAME/MOST_RECENTLY_USED
 
 while read -p "$PROGNAME > " command ; do
-  prefix=$(echo $command | grep -o '^@[0-9,]\+')
-  selected=${prefix#@}
-  selected=(${selected//,/ })
-  command=$(echo $command | sed "s/^$prefix//")
+  command_prefix=$(echo $command | grep -o '^@[0-9,]\+')
+  selected_indices=${command_prefix#@}
+  selected_indices=(${selected_indices//,/ })
+  command=$(echo $command | sed "s/^$command_prefix//")
+
   index=0
   prev_exit_code=0
-
   for dir in "${target_dirs[@]}"; do
     index=$(( $index+1 ))
-    if [[ "$selected" != "" ]] && [[ ! " ${selected[@]} " =~ " ${index} " ]]; then
+    if [[ "$selected_indices" != "" ]] && [[ ! " ${selected_indices[@]} " =~ " ${index} " ]]; then
       continue
     fi
 
