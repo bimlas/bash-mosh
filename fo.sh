@@ -3,20 +3,32 @@
 
 include_cd_exit_code=0
 
-target_dirs=()
+argument_dirs=()
 if [[ $# == 0 ]]; then
   echo "TODO: fo.sh ! WARNING: Using most recently used directory list"
 else
   while [ "$1" != "" ]; do
     if [[ ${1:0:1} == "@" ]]; then
       readarray -t predefined_dir_list < ~/.fo.sh/${1#@}
-      target_dirs+=(${predefined_dir_list[@]})
+      argument_dirs+=(${predefined_dir_list[@]})
     else
-      target_dirs+=($1)
+      argument_dirs+=($1)
     fi
     shift
   done
 fi
+
+IFS=$'\n' sorted_argument_dirs=($(sort -u <<<"${argument_dirs[*]}"))
+unset IFS
+
+target_dirs=()
+for dir in "${sorted_argument_dirs[@]}"; do
+  if [[ -d "$dir" ]]; then
+    target_dirs+=($dir)
+  else
+    echo "fo.sh ! SKIPPED: $dir: Not a directory"
+  fi
+done
 
 while read -p "fo.sh > " command ; do
   prefix=$(echo $command | grep -o '^@[0-9,]\+')
