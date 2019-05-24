@@ -123,6 +123,65 @@ index 12b5e40..733220f 100644
 ...
 ```
 
+#### Check the exit code of the previous command
+
+For example the exit code if a command not found is 127:
+
+```
+fo.sh > echo "Exit code: $?"; non_existent_command
+____________________________________________________________________
+@1 dir1 (.)
+
+Exit code: 0
+/bin/bash: non_existent_command: command not found
+
+____________________________________________________________________
+@2 non_existent_directory (.)
+
+/.../fo.sh: line 23: pushd: non_existent_directory: No such file or directory
+
+____________________________________________________________________
+@3 dir3 (.)
+
+Exit code: 127
+/bin/bash: non_existent_command: command not found
+
+____________________________________________________________________
+@3 dir4 (.)
+
+Exit code: 127
+/bin/bash: non_existent_command: command not found
+```
+
+Optionally, you can follow the pushd exit code which is 1 if the directory is
+not exists:
+
+```
+fo.sh > echo "Exit code: $?"; non_existent_command
+____________________________________________________________________
+@1 dir1 (.)
+
+Exit code: 0
+/bin/bash: non_existent_command: command not found
+
+____________________________________________________________________
+@2 non_existent_directory (.)
+
+/.../fo.sh: line 23: pushd: non_existent_directory: No such file or directory
+
+____________________________________________________________________
+@3 dir3 (.)
+
+Exit code: 1
+/bin/bash: non_existent_command: command not found
+
+____________________________________________________________________
+@3 dir4 (.)
+
+Exit code: 127
+/bin/bash: non_existent_command: command not found
+```
+
 ## FAQ
 
 ### I use MinTTY on Windows and XY don't work or work differently
