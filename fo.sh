@@ -6,6 +6,7 @@ include_cd_exit_code=0
 argument_dirs=()
 if [[ $# == 0 ]]; then
   echo "TODO: fo.sh ! WARNING: Using most recently used directory list"
+  readarray -t argument_dirs < ~/.fo.sh/MOST_RECENTLY_USED
 else
   while [ "$1" != "" ]; do
     if [[ ${1:0:1} == "@" ]]; then
@@ -29,6 +30,8 @@ for dir in "${sorted_argument_dirs[@]}"; do
     echo "fo.sh ! SKIPPED: $dir: Not a directory"
   fi
 done
+
+printf "%s\n" "${target_dirs[@]}" > ~/.fo.sh/MOST_RECENTLY_USED
 
 while read -p "fo.sh > " command ; do
   prefix=$(echo $command | grep -o '^@[0-9,]\+')
