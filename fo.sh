@@ -1,21 +1,23 @@
 #!/bin/bash
 # Execute shell commands in multiple directories grouped by tag
 
+PROGNAME=fo.sh
+
 include_cd_exit_code=0
 
 argument_dirs=()
 if [[ $# == 0 ]]; then
-  if [[ -f ~/.fo.sh/MOST_RECENTLY_USED ]]; then
-    echo "fo.sh ! WARNING: Using most recently used directory list"
-    readarray -t argument_dirs < ~/.fo.sh/MOST_RECENTLY_USED
+  if [[ -f ~/.$PROGNAME/MOST_RECENTLY_USED ]]; then
+    echo "$PROGNAME ! WARNING: Using most recently used directory list"
+    readarray -t argument_dirs < ~/.$PROGNAME/MOST_RECENTLY_USED
   else
-    echo "fo.sh ! ERROR: No directories specified, exiting"
+    echo "$PROGNAME ! ERROR: No directories specified, exiting"
     exit 1
   fi
 else
   while [ "$1" != "" ]; do
     if [[ ${1:0:1} == "@" ]]; then
-      readarray -t predefined_dir_list < ~/.fo.sh/${1#@}
+      readarray -t predefined_dir_list < ~/.$PROGNAME/${1#@}
       argument_dirs+=(${predefined_dir_list[@]})
     else
       argument_dirs+=($1)
@@ -33,14 +35,14 @@ for dir in "${sorted_argument_dirs[@]}"; do
     full_path=$(cd "$dir"; pwd)
     target_dirs+=($full_path)
   else
-    echo "fo.sh ! SKIPPED: $dir: Not a directory"
+    echo "$PROGNAME ! SKIPPED: $dir: Not a directory"
   fi
 done
 
-mkdir -p ~/.fo.sh/
-printf "%s\n" "${target_dirs[@]}" > ~/.fo.sh/MOST_RECENTLY_USED
+mkdir -p ~/.$PROGNAME/
+printf "%s\n" "${target_dirs[@]}" > ~/.$PROGNAME/MOST_RECENTLY_USED
 
-while read -p "fo.sh > " command ; do
+while read -p "$PROGNAME > " command ; do
   prefix=$(echo $command | grep -o '^@[0-9,]\+')
   selected=${prefix#@}
   selected=(${selected//,/ })
