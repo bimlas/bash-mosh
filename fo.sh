@@ -5,8 +5,13 @@ include_cd_exit_code=0
 
 argument_dirs=()
 if [[ $# == 0 ]]; then
-  echo "TODO: fo.sh ! WARNING: Using most recently used directory list"
-  readarray -t argument_dirs < ~/.fo.sh/MOST_RECENTLY_USED
+  if [[ -f ~/.fo.sh/MOST_RECENTLY_USED ]]; then
+    echo "fo.sh ! WARNING: Using most recently used directory list"
+    readarray -t argument_dirs < ~/.fo.sh/MOST_RECENTLY_USED
+  else
+    echo "fo.sh ! ERROR: No directories specified, exiting"
+    exit 1
+  fi
 else
   while [ "$1" != "" ]; do
     if [[ ${1:0:1} == "@" ]]; then
@@ -32,6 +37,7 @@ for dir in "${sorted_argument_dirs[@]}"; do
   fi
 done
 
+mkdir -p ~/.fo.sh/
 printf "%s\n" "${target_dirs[@]}" > ~/.fo.sh/MOST_RECENTLY_USED
 
 while read -p "fo.sh > " command ; do
