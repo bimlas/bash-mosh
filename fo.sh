@@ -3,6 +3,21 @@
 
 include_cd_exit_code=0
 
+target_dirs=()
+if [[ $# == 0 ]]; then
+  echo "TODO: fo.sh ! WARNING: Using most recently used directory list"
+else
+  while [ "$1" != "" ]; do
+    if [[ ${1:0:1} == "@" ]]; then
+      readarray -t predefined_dir_list < ~/.fo.sh/${1#@}
+      target_dirs+=(${predefined_dir_list[@]})
+    else
+      target_dirs+=($1)
+    fi
+    shift
+  done
+fi
+
 while read -p "fo.sh > " command ; do
   prefix=$(echo $command | grep -o '^@[0-9,]\+')
   selected=${prefix#@}
@@ -11,7 +26,7 @@ while read -p "fo.sh > " command ; do
   index=0
   prev_exit_code=0
 
-  while read dir; do
+  for dir in "${target_dirs[@]}"; do
     index=$(( $index+1 ))
     if [[ "$selected" != "" ]] && [[ ! " ${selected[@]} " =~ " ${index} " ]]; then
       continue
@@ -33,7 +48,7 @@ while read -p "fo.sh > " command ; do
     prev_exit_code=$?
 
     popd > /dev/null
-  done < ~/dirlist
+  done
 
   echo -e "\n=============================================================================="
 done

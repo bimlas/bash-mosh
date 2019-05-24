@@ -43,8 +43,6 @@ you didn't know that you need it:
 
 ## Usage
 
-TODO all of the rest
-
 Arguments can be tags and paths.
 
 ```
@@ -70,7 +68,7 @@ __ @3 wip-project (/home/me/helping-tom/) ____________________________________
 fosh: run > another command and so on ...
 ```
 
-#### Filtering the directory list
+### Filtering the directory list
 
 If you want to **execute a command only in certain directories**, you can
 select them by their index.
@@ -88,7 +86,7 @@ __ @3 wip-project (/home/me/helping-tom/) ____________________________________
  M example-code.js
 ```
 
-#### Execute in the most recently used directories
+### Execute in the most recently used directories
 
 **This is useful if the output is long** and you want to execute additional
 commands on certain directories. In this case, open a new terminal window (so
@@ -123,7 +121,7 @@ index 12b5e40..733220f 100644
 ...
 ```
 
-#### Check the exit code of the previous command
+### Check the exit code of the previous command
 
 For example the exit code if a command not found is 127:
 
