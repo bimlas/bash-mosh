@@ -25,7 +25,8 @@ unset IFS
 target_dirs=()
 for dir in "${sorted_argument_dirs[@]}"; do
   if [[ -d "$dir" ]]; then
-    target_dirs+=($dir)
+    full_path=$(cd "$dir"; pwd)
+    target_dirs+=($full_path)
   else
     echo "fo.sh ! SKIPPED: $dir: Not a directory"
   fi
@@ -48,7 +49,7 @@ while read -p "fo.sh > " command ; do
     fi
 
     echo -e "\n______________________________________________________________________________"
-    echo -e "@$index $(echo $dir | sed 's#.*/##' ) ($(echo $dir | sed 's#/.*##'))\n"
+    echo -e "@$index $(echo $dir | sed 's#.*/##' ) ($(echo $dir | sed 's#/[^/]\+$##'))\n"
 
     pushd $dir > /dev/null
     pushd_exit_code=$?
