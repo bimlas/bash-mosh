@@ -14,10 +14,13 @@ while read -p "fo.sh > " command ; do
       continue
     fi
 
-    pushd $dir > /dev/null
-
     echo -e "\n______________________________________________________________________________"
     echo -e "@$index $(echo $dir | sed 's#.*/##' ) ($(echo $dir | sed 's#/.*##'))\n"
+
+    pushd $dir > /dev/null
+    if [[ $? != 0 ]]; then
+      continue
+    fi
 
     /bin/bash -c "$command"
 
