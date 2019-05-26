@@ -3,14 +3,27 @@
 
 PROGNAME=fo.sh
 
-_parse_arguments()
+_parse_tag_arguments()
+{
+  if [[ $# == 0 ]]; then
+    echo "$PROGNAME ! ERROR: No tags specified, exiting" >&2
+    exit 1
+  else
+    while [ "$1" != "" ]; do
+      echo ${1#@}
+      shift
+    done
+  fi
+}
+
+_parse_dirlist_arguments()
 {
   if [[ $# == 0 ]]; then
     if [[ -f ~/.$PROGNAME/MOST_RECENTLY_USED ]]; then
-      echo "$PROGNAME ! WARNING: Using most recently used directory list"
+      echo "$PROGNAME ! WARNING: Using most recently used directory list" >&2
       readarray -t argument_dirs < ~/.$PROGNAME/MOST_RECENTLY_USED
     else
-      echo "$PROGNAME ! ERROR: No directories specified, exiting"
+      echo "$PROGNAME ! ERROR: No directories specified, exiting" >&2
       exit 1
     fi
   else
@@ -50,33 +63,64 @@ _execute_command_in_directory()
     popd > /dev/null
 }
 
-argument_dirs=()
-_parse_arguments $@
+run()
+{
+  argument_dirs=()
+  _parse_dirlist_arguments $@
 
-target_dirs=($(_normalize_paths ${argument_dirs[@]}))
+  target_dirs=($(_normalize_paths ${argument_dirs[@]}))
 
-mkdir -p ~/.$PROGNAME/
-printf "%s\n" "${target_dirs[@]}" > ~/.$PROGNAME/MOST_RECENTLY_USED
+  mkdir -p ~/.$PROGNAME/
+  printf "%s\n" "${target_dirs[@]}" > ~/.$PROGNAME/MOST_RECENTLY_USED
 
-while read -p "$PROGNAME > " command ; do
-  command_prefix=$(echo $command | grep -o '^@[0-9,]\+')
-  selected_indices=${command_prefix#@}
-  selected_indices=(${selected_indices//,/ })
-  command=$(echo $command | sed "s/^$command_prefix//")
+  while read -p "$PROGNAME > " command ; do
+    command_prefix=$(echo $command | grep -o '^@[0-9,]\+')
+    selected_indices=${command_prefix#@}
+    selected_indices=(${selected_indices//,/ })
+    command=$(echo $command | sed "s/^$command_prefix//")
 
-  index=0
-  prev_exit_code=0
-  for dir in "${target_dirs[@]}"; do
-    index=$(( $index+1 ))
-    if [[ "$selected_indices" != "" ]] && [[ ! " ${selected_indices[@]} " =~ " ${index} " ]]; then
-      continue
-    fi
+    index=0
+    prev_exit_code=0
+    for dir in "${target_dirs[@]}"; do
+      index=$(( $index+1 ))
+      if [[ "$selected_indices" != "" ]] && [[ ! " ${selected_indices[@]} " =~ " ${index} " ]]; then
+        continue
+      fi
 
-    echo -e "\n______________________________________________________________________________"
-    echo -e "@$index $(echo $dir | sed 's#.*/##' ) ($(echo $dir | sed 's#/[^/]\+$##'))\n"
+      echo -e "\n______________________________________________________________________________"
+      echo -e "@$index $(echo $dir | sed 's#.*/##' ) ($(echo $dir | sed 's#/[^/]\+$##'))\n"
 
-    _execute_command_in_directory
+      _execute_command_in_directory
+    done
+
+    echo -e "\n=============================================================================="
   done
+}
 
-  echo -e "\n=============================================================================="
-done
+tag()
+{
+  target_tags=($(_parse_tag_arguments $@))
+  if [[ $? != 0 ]]; then
+    exit 1
+  fi
+
+  readarray -t dirs_from_stdin
+
+  mkdir -p ~/.$PROGNAME/
+  for tag in "${target_tags[@]}"; do
+    readarray -t current_dirs_of_tag 2> /dev/null < ~/.$PROGNAME/$tag
+    new_dirs_of_tag=$(_normalize_paths ${dirs_from_stdin[@]} ${current_dirs_of_tag[@]} | sort -u)
+    printf "%s\n" "${new_dirs_of_tag[@]}" > ~/.$PROGNAME/$tag
+  done
+}
+
+if [[ $# == 0 ]]; then
+  echo "$PROGNAME ! ERROR: No command specified, exiting" >&2
+  exit 1
+else
+  if ! ( declare -F | grep "^declare -f $1$" > /dev/null ); then
+    echo "$PROGNAME ! ERROR: $1: No such command, exiting" >&2
+    exit 1
+  fi
+  $@
+fi
