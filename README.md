@@ -1,14 +1,14 @@
-# Fo.sh: Execute shell commands in multiple directories grouped by tags
+# Mosh: Run shell commands in multiple directories grouped by tags
 
 For developers who **running the same command in different directories**
-repeatedly, Fosh is a productivity tool that saves time by **executing the
+repeatedly, Mosh is a productivity tool that saves time by **executing the
 command without having to change the directory**. Unlike other similar tools,
-Fosh does not bound to a certain software (like Git for example), it can
+Mosh does not bound to a certain software (like Git for example), it can
 **execute any shell command**. **It works on any Bash-compitable shell**
 (Bash, Zsh, Git Bash on Windows, etc.).
 
 **If you prefer Node and Npm, have a look at
-https://github.com/bimlas/node-fosh/**
+https://github.com/bimlas/node-mosh/**
 
 * **Manage multiple Git repositors together**
   * `push` and `pull` all of your repos at once
@@ -23,49 +23,83 @@ https://github.com/bimlas/node-fosh/**
 The essence of the logic in a nutshell:
 
 ```
-for(dir in selectedDirectories) {
-  cd(dir);
-  shellCommand();
-}
+for dir in $selected_directories; do
+  cd $dir
+  $shell_command
+done
 ```
 
-This also means the name: `for ... shell ...` -> `fo.sh`.
+The Mosh word is a reflection of what the program is doing: it runs around the
+directories.
+
+https://www.youtube.com/watch?v=fgBseiTlDTE
 
 ## Installation
 
-TODO
+Download the `mosh` script and place it somewhere on your PATH.
 
 Get the source code, report bugs, open pull requests, or just star because
 you didn't know that you need it:
 
-* https://gitlab.com/bimlas/node-fosh (official repository)
-* https://github.com/bimlas/node-fosh (mirror, star if you like it)
+* https://gitlab.com/bimlas/bash-mosh (official repository)
+* https://github.com/bimlas/bash-mosh (mirror, star if you like it)
 
-## Usage
+## Commands
+
+### Tag: Assign tags to directories
+
+The tags can be specified as command-line parameters prefixed with `@`,
+directories should be listed in the prompt, or piped to stdin.
+
+```
+$ mosh tag "@pictures" "@personal"
+/home/myself/photos
+/home/mom/my_little_family
+../granny
+
+$ echo "./" | mosh tag "@pictures" "@personal"
+```
+
+#### Find Git repositories
+
+**Tagging Git repositories** under the current directory (`./`) with
+"git-repos" tag:
+
+```
+$ find "./" -name ".git" -printf "%h\n" | mosh tag "@git-repos"
+```
+
+### Run: Execute commands in multiple directories
 
 Arguments can be tags and paths.
 
 ```
-$ fosh run "@git-repos" "../wip-project"
-fosh: run > git status --short --branch
+$ mosh run "@git-repos" "../wip-project"
+mosh > git status --short --branch
 
-__ @1 awesome-project (/home/me/src/) ________________________________________
+______________________________________________________________________________
+@1 awesome-project (/home/me/src/)
+
 ## master
 AM README.md
  M package.json
 
-__ @2 git-test (/home/me/src/) _______________________________________________
+______________________________________________________________________________
+@2 git-test (/home/me/src/)
+
 ## master...origin/master
  M README.adoc
  M encoding/cp1250-encoding-dos-eol.txt
  M encoding/dos-eol.txt
 
-__ @3 wip-project (/home/me/helping-tom/) ____________________________________
+______________________________________________________________________________
+@3 wip-project (/home/me/helping-tom/)
+
 ## master...origin/master
  M example-code.js
 
 ==============================================================================
-fosh: run > another command and so on ...
+mosh > another command and so on ...
 ```
 
 ### Filtering the directory list
@@ -74,14 +108,18 @@ If you want to **execute a command only in certain directories**, you can
 select them by their index.
 
 ```
-fosh: run > @1,3 git status --short --branch
+mosh > @1,3 git status --short --branch
 
-__ @1 awesome-project (/home/me/src/) ________________________________________
+______________________________________________________________________________
+@1 awesome-project (/home/me/src/)
+
 ## master
 AM README.md
  M package.json
 
-__ @3 wip-project (/home/me/helping-tom/) ____________________________________
+______________________________________________________________________________
+@3 wip-project (/home/me/helping-tom/)
+
 ## master...origin/master
  M example-code.js
 ```
@@ -96,21 +134,25 @@ arguments are given, but if you run it without arguments, it executes the
 commands on the last specified directories.
 
 ```
-$ fosh run "@git-repos" "../wip-project"
-fosh: run > git status --short --branch
+$ mosh run "@git-repos" "../wip-project"
+mosh > git status --short --branch
 
-__ @1 awesome-project (/home/me/src/) ________________________________________
+______________________________________________________________________________
+@1 awesome-project (/home/me/src/)
+
 ## master
 AM README.md
 ...
 
 # Another terminal
 
-$ fosh run
-fosh: WARNING: Using most recently used directory list
-fosh: run > @3 git diff
+$ mosh run
+mosh ! WARNING: Using most recently used directory list
+mosh > @3 git diff
 
-__ @3 wip-project (/home/me/helping-tom/) ____________________________________
+______________________________________________________________________________
+@3 wip-project (/home/me/helping-tom/)
+
  example-code.js | 1 +
  1 file changed, 1 insertion(+)
 
@@ -126,21 +168,21 @@ index 12b5e40..733220f 100644
 For example the exit code if a command not found is 127:
 
 ```
-fo.sh > echo "Exit code: $?"; non_existent_command
-____________________________________________________________________
-@1 dir1 (.)
+mosh > echo "Exit code: $?"; non_existent_command
+______________________________________________________________________________
+@1 awesome-project (/home/me/src/)
 
 Exit code: 0
 /bin/bash: non_existent_command: command not found
 
-____________________________________________________________________
-@2 dir2 (.)
+______________________________________________________________________________
+@2 git-test (/home/me/src/)
 
 Exit code: 127
 /bin/bash: non_existent_command: command not found
 
-____________________________________________________________________
-@3 dir3 (.)
+______________________________________________________________________________
+@3 wip-project (/home/me/helping-tom/)
 
 Exit code: 127
 /bin/bash: non_existent_command: command not found

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Execute shell commands in multiple directories grouped by tags
 
-PROGNAME=fo.sh
+PROGNAME=mosh
 
 run()
 {
