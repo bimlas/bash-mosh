@@ -8,7 +8,7 @@ Mosh does not bound to a certain software (like Git for example), it can
 (Bash, Zsh, Git Bash on Windows, etc.).
 
 **If you prefer Node and Npm, have a look at
-https://github.com/bimlas/node-mosh/**
+https://github.com/bimlas/node-fosh/**
 
 * **Manage multiple Git repositors together**
   * `push` and `pull` all of your repos at once
