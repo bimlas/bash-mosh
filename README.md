@@ -36,7 +36,8 @@ https://www.youtube.com/watch?v=fgBseiTlDTE
 
 ## Installation
 
-Download the `mosh` script and place it somewhere on your PATH.
+Download the `bin/mosh` script and place it somewhere on your PATH or use
+[Basher](https://github.com/basherpm/basher).
 
 Get the source code, report bugs, open pull requests, or just star because
 you didn't know that you need it:
