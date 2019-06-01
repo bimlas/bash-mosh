@@ -124,7 +124,7 @@ _convert_args_to_lines()
 _is_not_excluded()
 {
   selected_indices=$(cat)
-  [[ "$selected_indices" == "" ]] || ( echo "$selected_indices" | grep "^$1$" )
+  [[ "$selected_indices" == "" ]] || ( echo "$selected_indices" | grep "^$1$" > /dev/null )
 }
 
 _is_command_defined()
