@@ -7,6 +7,8 @@ Mosh does not bound to a certain software (like Git for example), it can
 **execute any shell command**. **It works on any Bash-compitable shell**
 (Bash, Zsh, Git Bash on Windows, etc.).
 
+![screencast](https://i.imgur.com/OFKXZMR.gif)
+
 **If you prefer Node and Npm, have a look at
 https://github.com/bimlas/node-fosh/**
 
@@ -43,7 +45,7 @@ Get the source code, report bugs, open pull requests, or just star because
 you didn't know that you need it:
 
 * https://gitlab.com/bimlas/bash-mosh (official repository)
-* https://github.com/bimlas/bash-mosh (mirror, star if you like it)
+* https://github.com/bimlas/bash-mosh (mirror, please star if you like it)
 
 ## Commands
 
@@ -60,6 +62,9 @@ $ mosh tag "@pictures" "@personal"
 
 $ echo "./" | mosh tag "@pictures" "@personal"
 ```
+
+Tag files are stored in `~/.mosh` directory, you can edit them with any text
+editor.
 
 #### Find Git repositories
 
