@@ -12,8 +12,12 @@ run()
   fi
 
   echo "$target_dirs" | _set_dirs_of_tag MOST_RECENTLY_USED
+  history -r ~/."$PROGNAME"_history
 
-  while read -p "$PROGNAME > " command ; do
+  while read -e -p "$PROGNAME > " command ; do
+    history -s "$command"
+    history -w ~/."$PROGNAME"_history
+
     previous_exit_code=0
     command_prefix=$(echo "$command" | grep -o "^@[0-9,]\+")
     selected_indices=$(echo "${command_prefix#@}" | sed "s/,/\n/g")
