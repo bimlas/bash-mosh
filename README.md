@@ -49,6 +49,66 @@ you didn't know that you need it:
 
 ## Commands
 
+### Basic Usage
+
+Let's say that I have a bunch of directories that start with the same prefix in
+`/tmp`, and I want to issue the same commands to all of them. I can use
+"mosh run" with a wild card for the directory names I want to interact with:
+
+```bash
+$ mosh run tmp*
+```
+
+And this will open up an interactive terminal:
+
+```bash
+mosh >
+```
+
+At this point, I can run one or more commands. For example, we can list
+content:
+
+```bash
+mosh > ls
+...
+______________________________________________________________________________
+@13 tmpsud9lsc5 (/tmp)
+
+files.docker.kq2g173t  labels.docker.a_yp2h7r	       post.docker.96dtr3a2	  test.docker.ddiu0sd5
+from.docker.o7e0byjg   multiple-lines.docker.ty1zf2da  runscript.docker.ho91ajlb
+
+______________________________________________________________________________
+@14 tmpvhujkbuw (/tmp)
+...
+```
+
+and exit when we are done with Control +C. As another useful example, here
+we can check the status for a bunch of GitHub repos.
+
+```bash
+mosh run *
+```
+```
+mosh > git branch | grep "*"
+____________________________________________________________________________
+@8 sregistry (/home/vanessa/Desktop)
+
+* master
+
+______________________________________________________________________________
+@9 sregistry-cli (/home/vanessa/Desktop)
+
+* add/registry-build
+
+______________________________________________________________________________
+@10 watchme (/home/vanessa/Desktop)
+
+* master
+```
+
+This is basic usage for mosh. Continue reading to see how to tag folders
+for later interaction.
+
 ### Tag: Assign tags to directories
 
 The tags can be specified as command-line parameters prefixed with `@`,
