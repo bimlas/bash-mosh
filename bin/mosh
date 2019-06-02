@@ -155,7 +155,7 @@ _echo_to_stderr()
 if [[ $# == 0 ]]; then
   _echo_to_stderr "ERROR: No command specified, exiting. See mosh --help."
   exit 1
-elif [[ "${1}" == "--help" ]]; then
+elif [[ $# == 1 ]] && [[ "${1}" == "--help" ]]; then
     echo "
 mosh is a client to help you run shell commands in multiple 
 directories grouped by tags. See https://github.com/bimlas/bash-mosh
