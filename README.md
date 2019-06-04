@@ -188,6 +188,15 @@ index 12b5e40..733220f 100644
 ...
 ```
 
+### Execute non-interactively
+
+If you want to use it within a script or in scheduled tasks, you can also send
+commands to stdin.
+
+```
+$ echo "cp -r ./ ~/image_backups" | mosh run "@pictures" > /dev/null
+```
+
 ### Check the exit code of the previous command
 
 If a command requires the success of the same command in the previous
