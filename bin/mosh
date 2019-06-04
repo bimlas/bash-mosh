@@ -1,14 +1,12 @@
 #!/bin/bash
-# Execute shell commands in multiple directories grouped by tags
 
-PROGNAME=mosh
+PROGNAME="mosh"
 
 run()
 {
   target_dirs=$(_convert_args_to_lines "$@" | _get_target_dirs)
   if [[ "$target_dirs" == "" ]]; then
-    _echo_to_stderr "ERROR: No directories specified, exiting"
-    exit 1
+    _exit_with_optional_help "No directories specified"
   fi
 
   echo "$target_dirs" | _set_dirs_of_tag MOST_RECENTLY_USED
@@ -44,8 +42,7 @@ run()
 tag()
 {
   if [[ $# == 0 ]]; then
-    _echo_to_stderr "ERROR: No tags specified, exiting"
-    exit 1
+    _exit_with_optional_help "No tags specified"
   fi
 
   dirs_from_stdin=$(cat)
@@ -152,13 +149,37 @@ _echo_to_stderr()
   echo "$PROGNAME ! $*" >&2
 }
 
-if [[ $# == 0 ]]; then
-  _echo_to_stderr "ERROR: No command specified, exiting"
+_exit_with_optional_help()
+{
+  _echo_to_stderr "ERROR: $*, exiting"
+  if [[ $2 == true ]]; then
+    _show_help
+  else
+    echo "See '$PROGNAME --help' for additional information"
+  fi
   exit 1
+}
+
+_show_help()
+{
+  echo "
+$PROGNAME: Execute shell commands in multiple directories grouped by tags
+
+Read about usage, report bugs, open pull requests, or just star because
+you didn't know that you need it:
+
+* https://gitlab.com/bimlas/bash-mosh (official repository)
+* https://github.com/bimlas/bash-mosh (mirror, please star if you like it)
+"
+}
+
+if [[ $# == 0 ]]; then
+  _exit_with_optional_help "No command specified" true
+elif [[ $# == 1 ]] && [[ "${1}" == "--help" ]]; then
+  _show_help
 else
   if ! ( _is_command_defined "$1" ); then
-    _echo_to_stderr "ERROR: $1: No such command, exiting"
-    exit 1
+    _exit_with_optional_help "$1: No such command" true
   fi
   "$@"
 fi

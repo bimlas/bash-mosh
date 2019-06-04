@@ -47,40 +47,53 @@ you didn't know that you need it:
 * https://gitlab.com/bimlas/bash-mosh (official repository)
 * https://github.com/bimlas/bash-mosh (mirror, please star if you like it)
 
-## Commands
-
-### Tag: Assign tags to directories
-
-The tags can be specified as command-line parameters prefixed with `@`,
-directories should be listed in the prompt, or piped to stdin.
-
-```
-$ mosh tag "@pictures" "@personal"
-/home/myself/photos
-/home/mom/my_little_family
-../granny
-
-$ echo "./" | mosh tag "@pictures" "@personal"
-```
-
-Tag files are stored in `~/.mosh` directory, you can edit them with any text
-editor.
-
-#### Find Git repositories
-
-**Tagging Git repositories** under the current directory (`./`) with
-"git-repos" tag:
-
-```
-$ find "./" -name ".git" -printf "%h\n" | mosh tag "@git-repos"
-```
+## Usage
 
 ### Run: Execute commands in multiple directories
 
-Arguments can be tags and paths.
+Let's say that you have a bunch of directories that start with the same prefix
+(`g`) in `/usr/share`. **You want to issue the same commands to all of them**.
+You can use `mosh run` with a wild card for the directory names you want to
+interact with:
 
 ```
-$ mosh run "@git-repos" "../wip-project"
+$ mosh run /usr/share/g*
+```
+
+This will open up an interactive terminal where you can run one or more
+commands. For example list the content of them:
+
+```
+mosh > ls
+
+______________________________________________________________________________
+@1 gdb (/usr/share)
+
+auto-load
+
+______________________________________________________________________________
+@2 git (/usr/share)
+
+msys2-32.ico  ReleaseNotes.css
+
+______________________________________________________________________________
+@3 glib-2.0 (/usr/share)
+
+gdb  schemas
+
+...
+```
+
+Exiting from the program is done with Control+D.
+
+Of course, this could have been done with the `ls /usr/g*` command. **The real
+targets of the program are the commands that can only be executed in the
+current directory, so we should enter the directory before issuing the
+command.** As a useful example, we can check the status for a bunch of Git
+repos.
+
+```
+$ mosh run ~/src/* "../wip-project"
 mosh > git status --short --branch
 
 ______________________________________________________________________________
@@ -106,6 +119,12 @@ ______________________________________________________________________________
 
 ==============================================================================
 mosh > another command and so on ...
+```
+
+**Arguments can be tags and paths** (see below for the description of tags).
+
+```
+$ mosh run "@git-repos" "../wip-project"
 ```
 
 ### Filtering the directory list
@@ -171,27 +190,55 @@ index 12b5e40..733220f 100644
 
 ### Check the exit code of the previous command
 
-For example the exit code if a command not found is 127:
+If a command requires the success of the same command in the previous
+directory, you can check the exit code.
 
 ```
-mosh > echo "Exit code: $?"; non_existent_command
+mosh > if [[ $? == 0 ]]; then echo "Running"; non_existent_command; else echo "Not running"; fi
 ______________________________________________________________________________
 @1 awesome-project (/home/me/src/)
 
-Exit code: 0
+Running
 /bin/bash: non_existent_command: command not found
 
 ______________________________________________________________________________
 @2 git-test (/home/me/src/)
 
-Exit code: 127
-/bin/bash: non_existent_command: command not found
+Not running
 
 ______________________________________________________________________________
 @3 wip-project (/home/me/helping-tom/)
 
-Exit code: 127
-/bin/bash: non_existent_command: command not found
+Not running
+```
+
+### Tag: Assign tags to directories
+
+To avoid having to always type the path of directories, you can assign them to
+tags (think of them as bookmarks).
+
+The tags can be specified as command-line parameters prefixed with `@`,
+directories should be listed in the prompt, or piped to stdin.
+
+```
+$ mosh tag "@pictures" "@personal"
+/home/myself/photos
+/home/mom/my_little_family
+../granny
+
+$ echo "./" | mosh tag "@pictures" "@personal"
+```
+
+Tag files are stored in `~/.mosh` directory, you can edit them with any text
+editor.
+
+#### Find Git repositories
+
+**Tagging Git repositories** under the current directory (`./`) with
+"git-repos" tag:
+
+```
+$ find "./" -name ".git" -printf "%h\n" | mosh tag "@git-repos"
 ```
 
 ## FAQ
