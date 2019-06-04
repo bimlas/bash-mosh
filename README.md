@@ -86,9 +86,9 @@ gdb  schemas
 
 Exiting from the program is done with Control+D.
 
-Of course, this could have been done with the `ls /usr/g*` command. **The real
-targets of the program are the commands that can only be executed in the
-current directory, so we should enter the directory before issuing the
+Of course, this could have been done with the `ls /usr/share/g*` command.
+**The real targets of the program are the commands that can only be executed
+in the current directory, so we should enter the directory before issuing the
 command.** As a useful example, we can check the status for a bunch of Git
 repos.
 
