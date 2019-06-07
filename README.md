@@ -49,7 +49,7 @@ you didn't know that you need it:
 
 ## Usage
 
-### Run: Execute commands in multiple directories
+## Run: Execute commands in multiple directories
 
 Let's say that you have a bunch of directories that start with the same prefix
 (`g`) in `/usr/share`. **You want to issue the same commands to all of them**.
@@ -125,6 +125,19 @@ mosh > another command and so on ...
 
 ```
 $ mosh run "@git-repos" "../wip-project"
+```
+
+Since you will mostly use the `run` command, you may want to **assign an
+alias** to execute the command with less typing.
+
+```
+# Before
+$ mosh run ~/src/* "../wip-project"
+
+alias run="mosh run"
+
+# After
+$ run ~/src/* "../wip-project"
 ```
 
 ### Filtering the directory list
@@ -221,7 +234,7 @@ ______________________________________________________________________________
 Not running
 ```
 
-### Tag: Assign tags to directories
+## Tag: Assign tags to directories
 
 To avoid having to always type the path of directories, you can assign them to
 tags (think of them as bookmarks).
