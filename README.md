@@ -254,7 +254,7 @@ $ echo "./" | mosh tag "@pictures" "@personal"
 Tag files are stored in `~/.mosh` directory, you can edit them with any text
 editor.
 
-#### Find Git repositories
+### Find Git repositories
 
 **Tagging Git repositories** under the current directory (`./`) with
 "git-repos" tag:
