@@ -263,6 +263,21 @@ editor.
 $ find "./" -name ".git" -printf "%h\n" | mosh tag "@git-repos"
 ```
 
+### Tag new repositories automatically
+
+In order not to miss any newly created or cloned repositories, one of the [Git
+hooks](https://git-scm.com/docs/githooks)
+([post-commit](https://git-scm.com/docs/githooks#_post_commit) or
+[pre-push](https://git-scm.com/docs/githooks#_pre_push) for example) can be
+used to automatically assign the repository path to a default tag.
+
+```
+#!/bin/sh
+if ( which mosh &> /dev/null ); then
+  echo "." | mosh tag "@git" &
+fi
+```
+
 ## FAQ
 
 ### I use MinTTY on Windows and XY don't work or work differently
