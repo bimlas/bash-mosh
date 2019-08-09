@@ -274,7 +274,7 @@ used to automatically assign the repository path to a default tag.
 ```
 #!/bin/sh
 if ( which mosh &> /dev/null ); then
-  echo "." | mosh tag "@git" &
+  echo "." | mosh tag "@git" &> /dev/null &
 fi
 ```
 
