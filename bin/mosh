@@ -80,7 +80,7 @@ _normaize_dir_paths()
       continue
     fi
     if [[ -d "$dir_path" ]]; then
-      (cd "$dir_path"; pwd)
+      (cd "$dir_path"; pwd -P)
     else
       _echo_to_stderr "SKIPPED: $dir_path: Not a directory"
     fi
