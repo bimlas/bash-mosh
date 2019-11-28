@@ -296,3 +296,4 @@ terminal like system default, your IDE's builtin terminal,
 * https://github.com/coderaiser/node-longrun
 * https://github.com/MamadouSy/fed
 * https://github.com/isacikgoz/gitbatch
+* http://myrepos.branchable.com/
