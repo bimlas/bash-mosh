@@ -9,9 +9,6 @@ Mosh does not bound to a certain software (like Git for example), it can
 
 ![screencast](https://i.imgur.com/OFKXZMR.gif)
 
-**If you prefer Node and Npm, have a look at
-https://github.com/bimlas/node-fosh/**
-
 - **Manage multiple Git repositors together**
   - `push` and `pull` all of your repos at once
   - Checkout the same branch for project and its submodules
@@ -30,11 +27,6 @@ for dir in $selected_directories; do
   $shell_command
 done
 ```
-
-The Mosh word is a reflection of what the program is doing: it runs around the
-directories.
-
-https://www.youtube.com/watch?v=fgBseiTlDTE
 
 ## Installation
 
