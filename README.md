@@ -12,15 +12,15 @@ Mosh does not bound to a certain software (like Git for example), it can
 **If you prefer Node and Npm, have a look at
 https://github.com/bimlas/node-fosh/**
 
-* **Manage multiple Git repositors together**
-  * `push` and `pull` all of your repos at once
-  * Checkout the same branch for project and its submodules
-  * Commit with the same message: walk through the repos without
+- **Manage multiple Git repositors together**
+  - `push` and `pull` all of your repos at once
+  - Checkout the same branch for project and its submodules
+  - Commit with the same message: walk through the repos without
     interruption and copy / paste the same commit message
-  * Prevent early push: you do not have to remember which repositories have
+  - Prevent early push: you do not have to remember which repositories have
     modified, just look at them at the end of the day to see where you need to
     push
-* **Control multiple vagrant machines at the same time**
+- **Control multiple vagrant machines at the same time**
 
 The essence of the logic in a nutshell:
 
@@ -44,8 +44,7 @@ Download the `bin/mosh` script and place it somewhere on your PATH or use
 Get the source code, report bugs, open pull requests, or just star because
 you didn't know that you need it:
 
-* https://gitlab.com/bimlas/bash-mosh (official repository)
-* https://github.com/bimlas/bash-mosh (mirror, please star if you like it)
+- https://github.com/bimlas/bash-mosh (please star if you like it)
 
 ## Usage
 
@@ -292,8 +291,8 @@ terminal like system default, your IDE's builtin terminal,
 
 ## Similar projects
 
-* https://github.com/joowani/dtags
-* https://github.com/coderaiser/node-longrun
-* https://github.com/MamadouSy/fed
-* https://github.com/isacikgoz/gitbatch
-* http://myrepos.branchable.com/
+- https://github.com/joowani/dtags
+- https://github.com/coderaiser/node-longrun
+- https://github.com/MamadouSy/fed
+- https://github.com/isacikgoz/gitbatch
+- http://myrepos.branchable.com/
